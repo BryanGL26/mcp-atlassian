@@ -190,11 +190,13 @@ class AtlassianMCP(FastMCP[MainAppContext]):
         path: str | None = None,
         middleware: list[Middleware] | None = None,
         transport: Literal["streamable-http", "sse"] = "streamable-http",
+        **kwargs: Any,
     ) -> "Starlette":
         user_token_mw = Middleware(UserTokenMiddleware, mcp_server_ref=self)
         final_middleware_list = [user_token_mw]
         if middleware:
             final_middleware_list.extend(middleware)
+        # Filter out kwargs that parent doesn't accept
         app = super().http_app(
             path=path, middleware=final_middleware_list, transport=transport
         )
